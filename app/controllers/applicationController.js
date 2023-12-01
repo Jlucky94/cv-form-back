@@ -1,4 +1,4 @@
-const {connect} = require("../../server/db/mongo");
+const {connect} = require("../../server/db/mongoDB");
 const {ObjectId} = require("mongodb");
 
 exports.createApplication = async (req, res) => {
