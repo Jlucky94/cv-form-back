@@ -1,23 +1,29 @@
 const {connect} = require("../../server/db/mongo");
+const {ObjectId} = require("mongodb");
+const fs = require('fs');
 
 exports.createApplication = async (req, res) => {
-    let collection = (await connect()).collection('cv-form')
+    let collection = (await connect()).collection('cv-form');
     try {
-        const newApplicationData = req.body;
+        let newApplicationData = req.body;
+
+        if (req.file) {
+            newApplicationData.resume = req.file.buffer;
+        }
         const result = await collection.insertOne(newApplicationData);
-        console.log(result)
-        res.status(201).json(result);
+        res.status(201).json({ id: result.insertedId });
     } catch (error) {
-        res.status(400).json({message: error.message});
+        res.status(400).json({ message: error.message });
     }
 };
 
 exports.getApplication = async (req, res) => {
-    let collection = await db.collection('cv-form')
+    let collection = (await connect()).collection('cv-form')
     try {
-        const application = await collection.findOne({_id: client.ObjectId(req.params.id)});
+        const applicationId = new ObjectId(req.params.id)
+        const application = await collection.findOne({_id: applicationId});
         if (!application) {
-            return res.status(404).json({message: 'Application not found'});
+            return res.status(404).json({message: 'Резюме не найдено'});
         }
         res.status(200).json(application);
     } catch (error) {
