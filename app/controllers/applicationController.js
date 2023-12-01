@@ -1,12 +1,10 @@
 const {connect} = require("../../server/db/mongo");
 const {ObjectId} = require("mongodb");
-const fs = require('fs');
 
 exports.createApplication = async (req, res) => {
     let collection = (await connect()).collection('cv-form');
     try {
         let newApplicationData = req.body;
-
         if (req.file) {
             newApplicationData.resume = req.file.buffer;
         }
